@@ -66,32 +66,28 @@ import '../../main.dart';
 
 final router = GoRouter(
   initialLocation: Routes.onboarding,
+  // C'est ici que GoRouter écoute les changements !
   refreshListenable: Listenable.merge([onboardingService, authService]),
   redirect: (context, state) {
     final hasSeenOnboarding = onboardingService.hasSeenOnboarding;
     final isLoggedIn = authService.isLoggedIn;
     final isOnboardingPath = state.matchedLocation == Routes.onboarding;
-    final isLoginPath = state.matchedLocation == Routes.login;
 
-    // Règle 1 : L'onboarding n'a pas été vu, on y reste.
     if (!hasSeenOnboarding) {
       return isOnboardingPath ? null : Routes.onboarding;
     }
 
-    // Règle 2 (CORRIGÉE) : L'utilisateur n'est pas connecté.
-    // L'onboarding a déjà été vu, donc on redirige vers le login.
+    // Si l'onboarding est terminé mais pas connecté, on va sur le login
     if (!isLoggedIn) {
-      // Si l'utilisateur n'est pas connecté, on le redirige vers l'onboarding
-      return (isOnboardingPath || isLoginPath) ? null : Routes.onboarding;
+      return state.matchedLocation == Routes.login ? null : Routes.login;
     }
 
-    // Règle 3 : L'utilisateur est connecté et essaie d'accéder à l'onboarding ou au login.
-    // On le renvoie directement à la page d'accueil.
-    if (isLoggedIn && (isOnboardingPath || isLoginPath)) {
+    // Si on est connecté et on essaie d'aller sur onboarding ou login, on redirige sur home
+    if (isLoggedIn &&
+        (isOnboardingPath || state.matchedLocation == Routes.login)) {
       return Routes.home;
     }
 
-    // Aucune redirection nécessaire.
     return null;
   },
   routes: [

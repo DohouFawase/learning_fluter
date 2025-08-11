@@ -6,9 +6,8 @@ import 'package:my_flutter_app/data/datasources/onboarding_local_datasource.dart
 import 'package:my_flutter_app/data/repository/onbrandrepository/onboarding_repository_impl.dart';
 import 'package:my_flutter_app/domain/usecase/set_onboarding_seen_usecase.dart';
 import 'package:my_flutter_app/ui/features/onboarding/presentation/provider/onboarding_viewmodel.dart';
-// Import du service
-// import 'package:my_flutter_app/data/services/onboarding_service.dart';
-// Import de l'instance globale depuis main.dart
+import 'package:my_flutter_app/data/services/onboarding_service.dart';
+// Importez vos services globaux
 import '../../../../../main.dart';
 
 class OnboardingScreen extends StatelessWidget {
@@ -16,22 +15,18 @@ class OnboardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Création des dépendances pour le ViewModel
     final localDatasource = OnboardingLocalDatasource();
-
-    // Utilisez l'instance globale de onboardingService
-    // Supprimez la ligne `final onboardingService = OnboardingService();`
-
+    // Utilisez l'instance globale, ne créez pas de nouvelle instance ici
     final repository = OnboardingRepositoryImpl(
       localDatasource: localDatasource,
-      onboardingService: onboardingService, // Utilisation de l'instance globale
+      onboardingService: onboardingService, // Instance globale
     );
     final usecase = SetOnboardingSeenUsecase(repository: repository);
 
     return ChangeNotifierProvider(
       create: (context) => OnboardingViewModel(
         setOnboardingSeenUsecase: usecase,
-        onboardingService: onboardingService, // Passé l'instance globale
+        onboardingService: onboardingService, // Instance globale
       ),
       child: Consumer<OnboardingViewModel>(
         builder: (context, viewModel, child) {
@@ -81,7 +76,6 @@ class OnboardingScreen extends StatelessWidget {
               ),
             ],
             onDone: () async {
-              // Appeler la méthode du ViewModel pour terminer l'onboarding
               await viewModel.completeOnboarding();
             },
             showSkipButton: true,

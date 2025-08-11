@@ -1,4 +1,4 @@
-// lib/core/services/onboarding_service.dart
+// lib/data/services/onboarding_service.dart
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,6 +18,7 @@ class OnboardingService extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_hasSeenOnboardingKey, status);
     _hasSeenOnboarding = status;
+    // C'est cette ligne qui informe le GoRouter du changement !
     notifyListeners();
   }
 }
